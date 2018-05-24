@@ -1,0 +1,11 @@
+# Object files
+*.o
+
+# Temporary files
+*.sw*
+
+# Testing directories
+build
+
+# Tool files
+*.tsv
