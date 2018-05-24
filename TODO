@@ -1,0 +1,3 @@
+# Cli
+* wrapper to isatty() with std::istream
+* support the quotes
