@@ -25,7 +25,7 @@ class Cli {
          * \return True on success and false if an io error occured
          * \note   The line is parsed with a space as delimiter
          */
-        bool getcmd(std::vector<std::string> &cmd);
+        bool getcmdline(std::vector<std::string> &cmd);
 
         /**
          * Output the attribute @prompt_ to stderr

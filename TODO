@@ -1,3 +1,7 @@
 # Cli
 * wrapper to isatty() with std::istream
 * support the quotes
+* autocompletion on file
+
+# Commands
+* Add timestamp parser ([DATE:HOUR]-[DATE:HOUR])
