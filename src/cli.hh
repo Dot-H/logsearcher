@@ -12,16 +12,17 @@
  */
 class Cli {
     public:
+        Cli()
+            : is_(std::cin), prompt_("> ") {}
         Cli(std::istream &is)
             : is_(is), prompt_("> ") {}
-
         Cli(std::istream &is, const std::string &prompt)
             : is_(is), prompt_(prompt) {}
 
         /**
          * \brief  Parse a line from the attribute @is_ and fill the @cmd
          *         with the parsed line.
-         * \param  cmd The vector to fill with the arguments 
+         * \param  cmd The vector to fill with the arguments
          * \return True on success and false if an io error occured
          * \note   The line is parsed with a space as delimiter
          */

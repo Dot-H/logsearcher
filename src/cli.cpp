@@ -3,7 +3,7 @@
 #include <sstream>
 #include <istream>
 
-bool Cli::getcmd(std::vector<std::string> &cmd) {
+bool Cli::getcmdline(std::vector<std::string> &cmd) {
     cmd.clear();
     std::string line;
     if (&is_ == &std::cin)

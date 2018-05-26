@@ -4,6 +4,8 @@
 #include <memory>
 #include <functional>
 
+#include "environment.hh"
+
 /**
   * \brief Exposes a common functor for all the registered commands
   */
@@ -27,23 +29,24 @@ class Cmd {
   */
 struct CmdBuilder {
     using cmd_ptr = std::shared_ptr<Cmd>;
-    using builder_func = std::function<cmd_ptr(std::vector<std::string>)>;
+    using builder_func = std::function<cmd_ptr(const Environment&, std::vector<std::string>)>;
     using cmd_mapper = std::unordered_map<std::string, builder_func>;
     static cmd_mapper cmds;
 
     template <class C, typename ...T>
-    static cmd_ptr cmdBuilder(std::vector<std::string> args);
+    static cmd_ptr cmdBuilder(const Environment &env, std::vector<std::string> args);
 };
 
 
 struct Top : public Cmd {
-    Top(int n)
-        : Cmd("top"), n(n) {}
+    Top(const Environment &env, int n)
+        : Cmd("top"), env_(env), n(n) {}
 
     void operator() () const override {
         std::cout << n << std::endl;
     };
 
+    const Environment &env_; 
     const int n;
 };
 
