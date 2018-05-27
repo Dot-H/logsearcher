@@ -1,38 +1,33 @@
 #pragma once
 
+#include <memory>
 #include <ostream>
-#include <string>
+
+#include "logfile.hh"
 
 class Environment {
+    using logfile_ptr = std::shared_ptr<LogFile>;
     public:
         Environment(std::ostream &out)
-            : out_(out) {};
-        ~Environment() { forceClose(); }
-
-        Environment(std::ostream &out, const char *filename)
-            : out_(out) {
-          loadFile(filename);
-        }
+            : out_(out), logs_(nullptr) {}
+        Environment(std::ostream &out, const std::string &filename)
+            : out_(out), logs_(std::make_shared<LogFile>(filename)) {}
 
         Environment(const Environment &) = delete;
 
-        /* Setters */
         /**
-          * \brief Change the currend working file (@fd_ and @path_).
-          *        @filename is open with the flags O_RDONLY.
-          * \param filename name of a valid file
-          * \throw system_error Thrown if the open(2) call fail. Describes
-          *        the reasons of the failure.
-          */
-        void loadFile(const std::string &filename);
+         * \brief Change the currend working file (@fd_ and @path_).
+         *        @filename is open with the flags O_RDONLY.
+         * \param filename name of a valid file
+         * \throw system_error Thrown if the open(2) call fail. Describes
+         *        the reasons of the failure.
+         */
+        void loadFile(const std::string &filename) {
+            logs_ = nullptr; // Force the delete in order to free the fd
+            logs_ = std::make_shared<LogFile>(filename);
+        }
 
     private:
         std::ostream &out_;
-        std::string path_;
-        int fd_ = 0;
-
-        /**
-          * \brief Close @fd_ if open and ignores error if any.
-          */
-        void forceClose();
+        logfile_ptr logs_;
 };
