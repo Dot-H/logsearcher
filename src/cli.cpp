@@ -1,9 +1,15 @@
-#include "cli.hh"
-
 #include <sstream>
 #include <istream>
 
-bool Cli::getcmdline(std::vector<std::string> &cmd) {
+#include "cli.hh"
+#include "commands.hh"
+
+CmdBuilder::cmd_mapper CmdBuilder::cmds = {
+    {"top", CmdBuilder::cmdBuilder<Top, int>},
+    {"file", CmdBuilder::cmdBuilder<File, const std::string &>}
+};
+
+bool Cli::getcmdline(std::vector<std::string> &cmd) const {
     cmd.clear();
     std::string line;
     if (&is_ == &std::cin)
@@ -21,4 +27,19 @@ bool Cli::getcmdline(std::vector<std::string> &cmd) {
     } while (cmdstream.good() && !cmdstream.eof());
 
     return !cmdstream.fail();
+}
+
+void Cli::run() const {
+    std::vector<std::string> args;
+    while (getcmdline(args)) {
+        try {
+            auto builder = CmdBuilder::cmds.at(args[0]);
+            auto cmd = builder(env_, args);
+            (*cmd)();
+        } catch (const std::out_of_range &e) {
+            std::cerr << "Invalid command" << std::endl;
+        } catch (const std::exception &e) {
+            std::cerr << e.what() << std::endl;
+        }
+    }
 }

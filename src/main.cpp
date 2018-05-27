@@ -2,16 +2,6 @@
 #include <fstream>
 
 #include "cli.hh"
-#include "commands.hh"
-
-CmdBuilder::cmd_mapper CmdBuilder::cmds = {
-    {"top", CmdBuilder::cmdBuilder<Top, int>}
-};
-
-static void printCmd(const std::vector<std::string>& vect) {
-    for (const auto& arg : vect)
-        std::cout << arg << '\n';
-}
 
 static bool parseArguments(int argc, char *argv[], Environment &env) { 
     if (argc > 2) {
@@ -20,17 +10,16 @@ static bool parseArguments(int argc, char *argv[], Environment &env) {
     }
 
     if (argc == 2)
-        env.path = argv[1];
+        env.loadFile(argv[1]);
 
     return true;
 }
 
 int main(int argc, char *argv[]) {
-    Environment env = { "", std::cout, -1, Cli(std::cin) };
-    std::vector<std::string> args;
-    if (env.cli.getcmdline(args)) {
-        auto builder = CmdBuilder::cmds.at(args[0]);
-        auto cmd = builder(env, args);
-        (*cmd)();
-    }
+    Environment env(std::cout);   
+    Cli cli = Cli(env, std::cin);
+    if (!parseArguments(argc, argv, env))
+        return 1;
+
+    cli.run();
 }
