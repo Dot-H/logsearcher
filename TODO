@@ -4,9 +4,6 @@
 * autocompletion on file
 => Make a readline(3) wrapper..
 
-# Commands
-* Add timestamp parser ([DATE:HOUR]-[DATE:HOUR])
-
 # File
 * Sanity checks
 * Vectorized the bounds search in a block

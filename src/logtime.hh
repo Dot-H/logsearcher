@@ -6,12 +6,12 @@
 
 /* Length of LogTime string. Ex: "2015-08-01 00:03:46" */
 #define TIME_LEN 19
-
 /* Length of LogTime date string. Ex: "2015-08-01" */
 #define DATE_LEN 10
-
 /* Length of LogTime hour string. Ex: "00:03:46" */
 #define HOUR_LEN 8
+#define MAX_TIME "9999-12-31 99:59:59"
+#define MIN_TIME "0000-00-00 00:00:00"
 
 class LogTimeException : public std::exception {
     public:
@@ -33,6 +33,13 @@ class LogTime {
               hour_(std::string(rawtime + DATE_LEN + 1, HOUR_LEN)) {
                   checkDate(); checkHour();
               }
+
+        LogTime(const std::string &rawtime)
+            : date_(rawtime.substr(0, DATE_LEN)), 
+              hour_(rawtime.substr(DATE_LEN + 1)) {
+                  checkDate(); checkHour();
+              }
+
         LogTime(std::string &date, std::string &hour)
             :date_(date), hour_(hour) {checkDate(); checkHour();}
         LogTime(const LogTime &time)

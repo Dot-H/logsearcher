@@ -4,6 +4,8 @@
 #include <memory>
 #include <functional>
 
+#include "logtime.hh"
+
 class Environment;
 
 /**
@@ -37,6 +39,11 @@ struct CmdBuilder {
 
     template <class C, typename... Args>
     static cmd_ptr cmdBuilder(Environment &env, string_vec args);
+
+    using time_opt = std::optional<LogTime>;
+    using timerange = std::pair<LogTime, LogTime>;
+    static LogTime parseLogTime(std::string str);
+    static timerange parseTimerange(const std::string &str);
 };
 
 /**
@@ -45,13 +52,14 @@ struct CmdBuilder {
   *        in the environment.
   */
 struct Top : public Cmd {
-    Top(const Environment &env, int n)
-        : Cmd("top"), env(env), n(n) {}
+    Top(const Environment &env, int n, CmdBuilder::timerange ts)
+        : Cmd("top"), env(env), n(n), ts(ts) {}
 
     void operator() () const override;
 
     const Environment &env; 
     const int n;
+    CmdBuilder::timerange ts;
 };
 
 /**
