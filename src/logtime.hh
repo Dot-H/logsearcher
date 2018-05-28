@@ -4,6 +4,10 @@
 #include <regex>
 #include <exception>
 
+/* TODO: Encode a time as a 48bit index and use it in a radix
+         tree.
+*/ 
+
 /* Length of LogTime string. Ex: "2015-08-01 00:03:46" */
 #define TIME_LEN 19
 /* Length of LogTime date string. Ex: "2015-08-01" */
@@ -30,9 +34,7 @@ class LogTime {
     public:
         LogTime(const char *rawtime)
             : date_(std::string(rawtime, DATE_LEN)),
-              hour_(std::string(rawtime + DATE_LEN + 1, HOUR_LEN)) {
-                  checkDate(); checkHour();
-              }
+              hour_(std::string(rawtime + DATE_LEN + 1, HOUR_LEN)) {}
 
         LogTime(const std::string &rawtime)
             : date_(rawtime.substr(0, DATE_LEN)), 

@@ -10,8 +10,6 @@ class Environment {
     public:
         Environment(std::ostream &out)
             : out_(out), logs_(nullptr) {}
-        Environment(std::ostream &out, const std::string &filename)
-            : out_(out), logs_(std::make_shared<LogFile>(filename)) {}
 
         Environment(const Environment &) = delete;
 
@@ -22,13 +20,15 @@ class Environment {
          * \throw system_error Thrown if the open(2) call fail. Describes
          *        the reasons of the failure.
          */
+        template<class F> /* TODO: enable_if extends LogFile */
         void loadFile(const std::string &filename) {
             logs_ = nullptr; // Force the delete in order to free the fd
-            logs_ = std::make_shared<LogFile>(filename);
+            logs_ = std::make_shared<F>(filename);
         }
 
         /* Getters */
         const logfile_ptr &logs() const { return logs_; }
+        std::ostream &out() const { return out_; }
 
     private:
         std::ostream &out_;

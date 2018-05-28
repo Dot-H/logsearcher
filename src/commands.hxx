@@ -30,15 +30,13 @@ CmdBuilder::timerange CmdBuilder::parseTimerange(const std::string &str) {
 }
 
 template <class C, typename... Args>
-CmdBuilder::cmd_ptr CmdBuilder::cmdBuilder(Environment &,
-                                           std::vector<std::string>) {
+CmdBuilder::cmd_ptr CmdBuilder::cmdBuilder(Environment &, const string_vec&) {
   throw std::invalid_argument("Command does not exist");
 }
 
 template <>
 CmdBuilder::cmd_ptr
-CmdBuilder::cmdBuilder<Top, int>(Environment &env,
-                                 std::vector<std::string> args) {
+CmdBuilder::cmdBuilder<Top, int>(Environment &env, const string_vec &args) {
     if (env.logs() == nullptr)
         throw std::invalid_argument("No file loaded");
 
@@ -56,17 +54,10 @@ CmdBuilder::cmdBuilder<Top, int>(Environment &env,
 template <>
 CmdBuilder::cmd_ptr
 CmdBuilder::cmdBuilder<File, const std::string &>(Environment &env,
-                                 std::vector<std::string> args) {
+                                                  const string_vec &args) {
     if (args.size() < 2)
         throw std::invalid_argument("File expect a file as argument");
 
     auto file = std::make_shared<File>(env, args[1]);
     return file;
 }
-
-void Top::operator() () const {
-    std::cout << n << std::endl;
-    auto blocks = env.logs()->searchLimitBlocks(ts, env.logs()->nblock() / 2);
-    std::cout << *blocks.first << std::endl;
-    std::cout << *blocks.second << std::endl;
-};

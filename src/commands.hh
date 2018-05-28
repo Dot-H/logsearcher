@@ -5,6 +5,7 @@
 #include <functional>
 
 #include "logtime.hh"
+#include "unordered-logfile.hh"
 
 class Environment;
 
@@ -38,7 +39,7 @@ struct CmdBuilder {
     static cmd_mapper cmds;
 
     template <class C, typename... Args>
-    static cmd_ptr cmdBuilder(Environment &env, string_vec args);
+    static cmd_ptr cmdBuilder(Environment &env, const string_vec &args);
 
     using time_opt = std::optional<LogTime>;
     using timerange = std::pair<LogTime, LogTime>;
@@ -55,7 +56,9 @@ struct Top : public Cmd {
     Top(const Environment &env, int n, CmdBuilder::timerange ts)
         : Cmd("top"), env(env), n(n), ts(ts) {}
 
-    void operator() () const override;
+    void operator() () const override {
+        env.logs()->top(env.out(), n, ts);
+    }
 
     const Environment &env;
     const int n;
@@ -71,10 +74,13 @@ struct File : public Cmd {
     File(Environment &env, const std::string &filename)
         : Cmd("file"), env(env), filename(filename) {}
 
-    void operator() () const override { env.loadFile(filename); }
+    void operator() () const override {
+        std::cout << filename << std::endl;
+        env.loadFile<UnorderedLogFile>(filename);
+    }
 
     Environment &env;
-    const std::string &filename;
+    const std::string filename;
 };
 
 #include "commands.hxx"
