@@ -57,7 +57,7 @@ struct Top : public Cmd {
 
     void operator() () const override;
 
-    const Environment &env; 
+    const Environment &env;
     const int n;
     CmdBuilder::timerange ts;
 };

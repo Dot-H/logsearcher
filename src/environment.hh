@@ -27,6 +27,9 @@ class Environment {
             logs_ = std::make_shared<LogFile>(filename);
         }
 
+        /* Getters */
+        const logfile_ptr &logs() const { return logs_; }
+
     private:
         std::ostream &out_;
         logfile_ptr logs_;

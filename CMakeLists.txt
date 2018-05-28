@@ -16,6 +16,8 @@ add_executable(logsearcher
         src/main.cpp)
 
 add_executable(logfile-test
+        src/logtime.cpp
+        src/logblock.cpp
         src/logfile.cpp
         tests/logfile.cpp)
 

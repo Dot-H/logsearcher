@@ -39,6 +39,9 @@ template <>
 CmdBuilder::cmd_ptr
 CmdBuilder::cmdBuilder<Top, int>(Environment &env,
                                  std::vector<std::string> args) {
+    if (env.logs() == nullptr)
+        throw std::invalid_argument("No file loaded");
+
     timerange ts = std::make_pair(MIN_TIME, MAX_TIME);
     if (args.size() < 2)
         throw std::invalid_argument("top expect a number as argument");
@@ -63,5 +66,7 @@ CmdBuilder::cmdBuilder<File, const std::string &>(Environment &env,
 
 void Top::operator() () const {
     std::cout << n << std::endl;
-    std::cout << ts.first << "--" << ts.second << std::endl;
+    auto blocks = env.logs()->searchLimitBlocks(ts, env.logs()->nblock() / 2);
+    std::cout << *blocks.first << std::endl;
+    std::cout << *blocks.second << std::endl;
 };
