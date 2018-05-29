@@ -25,6 +25,8 @@ class LogFile {
 
         virtual std::ostream &top(std::ostream &os, std::size_t n,
                                   const timerange &range) const = 0;
+        virtual std::ostream &count(std::ostream &os,
+                                    const timerange &range) const = 0;
 
         /* Getters */
         const std::string &filename() const { return filename_; }

@@ -57,11 +57,28 @@ struct Top : public Cmd {
         : Cmd("top"), env(env), n(n), ts(ts) {}
 
     void operator() () const override {
-        env.logs()->top(env.out(), n, ts);
+        env.logs()->top(env.out(), n, ts) << std::endl;
     }
 
     const Environment &env;
     const int n;
+    CmdBuilder::timerange ts;
+};
+
+/**
+  * \brief Functor of the 'count' command in the cli.
+  *        This command is used to output the number of distinct queries
+  *        that have been done during a specific time range..
+  */
+struct Count : public Cmd {
+    Count(Environment &env, CmdBuilder::timerange ts)
+        : Cmd("cnt"), env(env), ts(ts) {}
+
+    void operator() () const override {
+        env.logs()->count(env.out(), ts) << std::endl;
+    }
+
+    const Environment &env;
     CmdBuilder::timerange ts;
 };
 
@@ -75,7 +92,6 @@ struct File : public Cmd {
         : Cmd("file"), env(env), filename(filename) {}
 
     void operator() () const override {
-        std::cout << filename << std::endl;
         env.loadFile<UnorderedLogFile>(filename);
     }
 

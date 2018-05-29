@@ -53,6 +53,20 @@ CmdBuilder::cmdBuilder<Top, int>(Environment &env, const string_vec &args) {
 
 template <>
 CmdBuilder::cmd_ptr
+CmdBuilder::cmdBuilder<Count>(Environment &env, const string_vec &args) {
+    if (env.logs() == nullptr)
+        throw std::invalid_argument("No file loaded");
+
+    timerange ts = std::make_pair(MIN_TIME, MAX_TIME);
+    if (args.size() == 2)
+        ts = parseTimerange(args[1]);
+
+    auto count = std::make_shared<Count>(env, ts);
+    return count;
+}
+
+template <>
+CmdBuilder::cmd_ptr
 CmdBuilder::cmdBuilder<File, const std::string &>(Environment &env,
                                                   const string_vec &args) {
     if (args.size() < 2)

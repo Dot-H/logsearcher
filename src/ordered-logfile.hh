@@ -22,6 +22,11 @@ class OrderedLogFile : public LogFile {
             return os << "Not implemented yet";
         }
 
+        std::ostream &count(std::ostream &os,
+                            const timerange &) const override {
+            return os << "Not implemented yet";
+        }
+
         /**
          * \brief  Make a binary search inside the file (cut in blocks) until
          *         finding the block where @time is.

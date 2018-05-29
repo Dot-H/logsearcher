@@ -6,7 +6,8 @@
 
 CmdBuilder::cmd_mapper CmdBuilder::cmds = {
     {"top", CmdBuilder::cmdBuilder<Top, int>},
-    {"file", CmdBuilder::cmdBuilder<File, const std::string &>}
+    {"file", CmdBuilder::cmdBuilder<File, const std::string &>},
+    {"count", CmdBuilder::cmdBuilder<Count>}
 };
 
 bool Cli::getcmdline(std::vector<std::string> &cmd) const {

@@ -57,35 +57,59 @@ void UnorderedLogFile::parseFile() {
 }
 
 template <typename Iterator>
-static void
-populateTopVector(Iterator low, Iterator high,
-                  std::vector<std::pair<std::string, std::size_t>> &top) {
-    auto sum = UnorderedLogFile::query_cnter();
-    for (; low != high; ++low)
-        for (const auto &cnter : low->second)
+void UnorderedLogFile::sumQueryCounters(Iterator start, Iterator end,
+                                         query_cnter &sum) const {
+    for (; start != end; ++start)
+        for (const auto &cnter : start->second)
             sum[cnter.first] += cnter.second;
+}
 
-    top.resize(sum.size());
-    std::partial_sort_copy(
-            sum.begin(), sum.end(), top.begin(), top.end(),
-            [](const auto &lh, const auto &rh) { 
-                return lh.second > rh.second; 
-            });
+void UnorderedLogFile::populateTopVector(const query_cnter &sum,
+                                         std::vector<cnter_pair> &top) const {
+    std::partial_sort_copy(sum.begin(), sum.end(), top.begin(), top.end(),
+                           [](const auto &lh, const auto &rh) {
+                               return lh.second > rh.second;
+                           });
 }
 
 std::ostream &UnorderedLogFile::top(std::ostream &os, std::size_t n,
                                     const timerange &range) const {
-    const auto low = queries_map_.lower_bound(range.first);
-    if (low == queries_map_.end())
+    const auto start = queries_map_.lower_bound(range.first);
+    if (start == queries_map_.end())
       throw std::invalid_argument("No query found in this time range");
 
-    const auto high = queries_map_.upper_bound(range.second);
+    const auto end = queries_map_.upper_bound(range.second);
+    std::vector<cnter_pair> top;
 
-    /* Get a vector sorted by the number of occurence of a query */
-    std::vector<std::pair<std::string, std::size_t>> top;
-    populateTopVector(low, high, top);
-    for (const auto &el : top)
-        os << el.first << " " << el.second << '\n';
+    { // Relax the memory from sum as soon as we are done using it
+        query_cnter sum;
+        sumQueryCounters(start, end, sum);
 
+        top.resize(n <= sum.size() ? n : sum.size());
+        populateTopVector(sum, top);
+    }
+
+    auto el = top.begin();
+    for (; el != top.end()-1; ++el)
+        os << (*el).first << " " << (*el).second << '\n';
+    if (el != top.end())
+        os << (*el).first << " " << (*el).second;
+
+    return os;
+}
+
+std::ostream &UnorderedLogFile::count(std::ostream &os,
+                                      const timerange &range) const {
+    const auto start = queries_map_.lower_bound(range.first);
+    if (start == queries_map_.end())
+      throw std::invalid_argument("No query found in this time range");
+
+    const auto end = queries_map_.upper_bound(range.second);
+    std::vector<cnter_pair> top;
+
+    query_cnter sum;
+    sumQueryCounters(start, end, sum);
+
+    os << sum.size();
     return os;
 }
