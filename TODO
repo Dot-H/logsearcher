@@ -3,8 +3,16 @@
 * support the quotes
 * autocompletion on file
 => Make a readline(3) wrapper..
+* Rework the command builder
+* More flexible with the time range parsing
 
 # File
 * Sanity checks
+* Implements cli functions in OrderedLogFile
 * Vectorized the bounds search in a block
 * Parallelize the searchBlock function
+* Make use of a radix tree to represent the dates intervals
+  see commit 3704db13bb8df8ccba3fef2afff792196078861a
+
+# Tests
+* Make unit tests

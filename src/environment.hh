@@ -29,8 +29,13 @@ class Environment {
         /* Getters */
         const logfile_ptr &logs() const { return logs_; }
         std::ostream &out() const { return out_; }
+        bool isRunning() const { return running_; }
+
+        /* Setters */
+        void setRunning(bool value) { running_ = value; }
 
     private:
         std::ostream &out_;
         logfile_ptr logs_;
+        bool running_ = false;
 };

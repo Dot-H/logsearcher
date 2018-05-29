@@ -75,3 +75,17 @@ CmdBuilder::cmdBuilder<File, const std::string &>(Environment &env,
     auto file = std::make_shared<File>(env, args[1]);
     return file;
 }
+
+template <>
+CmdBuilder::cmd_ptr
+CmdBuilder::cmdBuilder<Quit>(Environment &env, const string_vec &) {
+    auto quit = std::make_shared<Quit>(env);
+    return quit;
+}
+
+template <>
+CmdBuilder::cmd_ptr
+CmdBuilder::cmdBuilder<Help>(Environment &env, const string_vec &) {
+    auto help = std::make_shared<Help>(env);
+    return help;
+}

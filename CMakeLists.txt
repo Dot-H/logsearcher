@@ -17,14 +17,14 @@ add_executable(logsearcher
         src/ordered-logfile.cpp
         src/unordered-logfile.cpp)
 
-add_executable(logfile-test
-        src/logblock.cpp
-        src/logfile.cpp
-        src/logtime.cpp
-        src/ordered-logfile.cpp
-        src/unordered-logfile.cpp
-        tests/logfile.cpp)
-
-add_executable(logtime-test
-        src/logtime.cpp
-        tests/logtime.cpp)
+#add_executable(logfile-test
+#       src/logblock.cpp
+#       src/logfile.cpp
+#       src/logtime.cpp
+#       src/ordered-logfile.cpp
+#       src/unordered-logfile.cpp
+#       tests/logfile.cpp)
+#
+#add_executable(logtime-test
+#       src/logtime.cpp
+#       tests/logtime.cpp)

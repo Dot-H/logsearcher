@@ -1,8 +1,10 @@
 #pragma once
 
-#include <unordered_map>
-#include <memory>
 #include <functional>
+#include <iomanip>
+#include <memory>
+#include <unordered_map>
+#include <utility>
 
 #include "logtime.hh"
 #include "unordered-logfile.hh"
@@ -35,7 +37,8 @@ struct CmdBuilder {
     using cmd_ptr = std::shared_ptr<Cmd>;
     using string_vec = std::vector<std::string>;
     using builder_func = std::function<cmd_ptr(Environment&, string_vec)>;
-    using cmd_mapper = std::unordered_map<std::string, builder_func>;
+    using cmd_mapper =
+        std::unordered_map<std::string, std::pair<builder_func, std::string>>;
     static cmd_mapper cmds;
 
     template <class C, typename... Args>
@@ -97,6 +100,43 @@ struct File : public Cmd {
 
     Environment &env;
     const std::string filename;
+};
+
+/**
+  * \brief Functor of the 'quit' command in the cli.
+  *        This command is used to stop an environment.
+  */
+struct Quit : public Cmd {
+    Quit(Environment &env)
+        : Cmd("quit"), env(env) {}
+
+    void operator()() const override { env.setRunning(false); }
+
+    Environment &env;
+};
+
+/**
+  * \brief Functor of the 'help' command in the cli.
+  */
+struct Help : public Cmd {
+    Help(Environment &env)
+        : Cmd("help"), env(env) {}
+
+    void operator()() const override { 
+       for (const auto &el : CmdBuilder::cmds) {
+           std::string out = el.first + ": " + el.second.second;
+           std::string pad(el.first.size() + 2, ' ');
+           int off = 80 - el.first.size() - 1;
+           while (int(out.size()) - off > 0) {
+               env.out() << out.substr(0, off) << '\n' << pad;
+               out = out.substr(off);
+           }
+
+           env.out() << out << '\n';
+       }
+    }
+
+    Environment &env;
 };
 
 #include "commands.hxx"
