@@ -3,7 +3,10 @@
 ## Building
 
 `mkdir build && cd build && cmake ..`
-`make`
+
+`make logsearcher #build release executable`
+
+`make bench #build bench, needs google benchmark` 
 
 ## Usage
 
@@ -40,6 +43,19 @@ after August 3rd, 2015.
 done after August 3rd, 2015 01:02:03.
 * `count 2015-03-03:00:00:00.2015-05-04` will output the number of queries that
 have been done beetwen March 3rd, 2015 and May 4th, 2015.
+
+## Bench
+
+It is possible to bench the software. In order to do that, you need to build the
+bench executable. Once done, simply run it with `./bench`.
+
+It will report the median and mean
+time taken by:
+* loading the file
+* top command on the whole file
+* count command on the whole file
+
+The file used by the bench executable is `PATH/TO/LOGSEARCHER/tests/hn_logs.tsv`.
 
 ## Authors
 

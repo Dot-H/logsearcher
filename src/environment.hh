@@ -27,6 +27,7 @@ class Environment {
         }
 
         /* Getters */
+        const std::string &filename() { return logs_->filename(); }
         const logfile_ptr &logs() const { return logs_; }
         std::ostream &out() const { return out_; }
         bool isRunning() const { return running_; }
