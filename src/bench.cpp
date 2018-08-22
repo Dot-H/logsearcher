@@ -4,9 +4,14 @@
 
 #include "cli.hh"
 #include "commands.hh"
+#include "logfile.hh"
+#include "logtime.hh"
 
 #define TSV_PATH "../tests/hn_logs.tsv"
+#define array_size(a) sizeof(a)
 
+// Coef used to cut to determines parts of the tsv to bench
+static double tsv_parts[] = { 0.1, 0.5, 0.8, 1 };
 
 extern CmdBuilder::cmd_mapper CmdBuilder::cmds;
 
@@ -18,6 +23,30 @@ public:
 static NullBuffer null_buffer;
 static std::ostream null_stream(&null_buffer);
 static Environment env(null_stream);
+
+/**
+ * populate the vector of timerange pointers
+ * foreach argument in the range, add the timranges
+ */
+static void selectTimestamp(benchmark::internal::Benchmark* b) {
+    static LogFile f(TSV_PATH);
+    std::cerr << "Benchmarking " << f << std::endline;
+
+    MmapGuard mapping(NULL, f.size(), PROT_READ, MAP_SHARED, f.fd(), 0);
+    const char *file  = static_cast<const char *>(mapping.addr);
+    LogTime *lowerLog = new LogTime(file);
+
+    std::vector<CmdBuilder::timerange *rangeArg> vec(array_size(tsv_parts));
+    for (int i = 0; i < array_size(tsv_parts); ++i) {
+        int schLog = f.size() * tsv_parts[i];
+
+        LogTime *upperLog = new LogTime(file + f.prevLog(schLog, file));
+        CmdBuilder::timerange *rangeArg =
+            new std::pair<LogTime, LogTime>(lowerLog, upperLog);
+
+        b->arg(static_cast<int64_t>(rangeArg));
+    }
+}
 
 static Environment &create_env(const char tsv_path[]) {
     // Use to avoid the copy made by google benchmark when repeting tests
@@ -39,7 +68,6 @@ void BM_LoadFile(benchmark::State &st, const char tsv_path[], orderType) {
 }
 
 void BM_Count(benchmark::State &st, Environment &env) {
-    CmdBuilder::string_vec args = { "count" };
     for (auto _ : st) {
         CmdBuilder::cmd_ptr cmd = CmdBuilder::cmdBuilder<Count>(env, args);
         (*cmd)();
@@ -47,12 +75,8 @@ void BM_Count(benchmark::State &st, Environment &env) {
 }
 
 void BM_Top(benchmark::State &st, Environment &env) {
-    CmdBuilder::string_vec args(2);
-    args[0] = "top";
     for (auto _ : st) {
-        args[1] = std::to_string(st.range(0));
-        CmdBuilder::cmd_ptr cmd = CmdBuilder::cmdBuilder<Top, int>(env, args);
-        (*cmd)();
+        Top top(env, st.range(0), );
     }
 }
 
@@ -72,7 +96,8 @@ BENCHMARK_CAPTURE(
         create_env(TSV_PATH))
         ->Repetitions(10)
         ->ReportAggregatesOnly(true)
-        ->Unit(benchmark::kMillisecond);
+        ->Unit(benchmark::kMillisecond)
+        ->Apply(selectTimestamp);
 
 BENCHMARK_CAPTURE(
         BM_LoadFile, load_file,

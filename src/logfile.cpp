@@ -9,6 +9,20 @@ LogFile::LogFile(const std::string &filename)
     size_ = sb.st_size;
 }
 
+virtual std::size_t LogFile::nextLog(std::size_t idx, const char *file) const { 
+    while (file[idx++] != '\n' && idx < size_); // Put idx on a valid date
+
+    return idx;
+}
+
+std::size_t LogFile::prevLog(std::size_t idx, const char *file) const {
+    while (file[idx--] != '\n' && idx > 0); // Trash the incomplete line
+    while (file[idx - 1] != '\n' && idx > 0) // Put the index on a valid date
+        --idx;
+
+    return idx;
+}
+
 std::ostream &operator<<(std::ostream &os, const LogFile &logs) {
     os << "Filename: "  << logs.filename_ << " (fd: " << logs.fd_ << ")\n";
     os << "Size: "      << logs.size_ << '\n';

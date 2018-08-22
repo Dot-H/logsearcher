@@ -28,6 +28,20 @@ class LogFile {
         virtual std::ostream &count(std::ostream &os,
                                     const timerange &range) const = 0;
 
+        /* FIXME: Use nextLog and prevLog in logblock */
+        /**
+         * \brief  Search the first linebreak from idx in order to find the 
+         *         next log.
+         * \return Return the idx of the starting log.
+         */
+        virtual std::size_t nextLog(std::size_t idx, const char *file) const;
+
+        /**
+         * \brief  Search the start of the first complete log from idx
+         * \return Return the idx of the starting log.
+         */
+        virtual std::size_t prevLog(std::size_t idx, const char *file) const;
+
         /* Getters */
         const std::string &filename() const { return filename_; }
         int fd() const { return fd_; }
