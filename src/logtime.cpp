@@ -1,7 +1,11 @@
 #include "logtime.hh"
 
+std::string LogTime::to_string() const {
+    return date_ + ':' + hour_;
+}
+
 std::ostream &operator<<(std::ostream &os, const LogTime &time) {
-    os << time.date_ << ' ' << time.hour_;
+    os << time.to_string();
     return os;
 }
 
