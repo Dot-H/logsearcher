@@ -1,4 +1,4 @@
-#pragma once
+#include "commands.hh"
 
 LogTime CmdBuilder::parseLogTime(std::string str) {
     std::string::size_type n = str.find(":");
