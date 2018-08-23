@@ -55,6 +55,7 @@ class LogTime {
        bool operator==(const LogTime &rh) const;
 
        friend std::ostream &operator<<(std::ostream &os, const LogTime &time);
+       std::string to_string() const;
 
        /**
         *  \return True if min <= this <= max. Else otherwise.

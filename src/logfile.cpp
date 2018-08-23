@@ -9,7 +9,7 @@ LogFile::LogFile(const std::string &filename)
     size_ = sb.st_size;
 }
 
-virtual std::size_t LogFile::nextLog(std::size_t idx, const char *file) const { 
+std::size_t LogFile::nextLog(std::size_t idx, const char *file) const { 
     while (file[idx++] != '\n' && idx < size_); // Put idx on a valid date
 
     return idx;
