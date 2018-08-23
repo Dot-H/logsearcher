@@ -6,10 +6,9 @@
 #include <unordered_map>
 #include <utility>
 
+#include "environment.hh"
 #include "logtime.hh"
 #include "unordered-logfile.hh"
-
-class Environment;
 
 /**
   * \brief Exposes a common functor for all the registered commands
@@ -138,5 +137,3 @@ struct Help : public Cmd {
 
     Environment &env;
 };
-
-#include "commands.hxx"
